@@ -1,0 +1,27 @@
+version: "3.7"
+services:
+
+  rabbitmq:
+    image: rabbitmq:3.10.1-management-alpine
+    container_name: 'rabbitmq'
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbit
+      - RABBITMQ_DEFAULT_PASS=rabbit
+
+  spring:
+    image: spring:latest
+    container_name: 'spring'
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    depends_on:
+      - rabbitmq
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
